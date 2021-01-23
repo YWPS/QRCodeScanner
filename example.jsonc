@@ -1,0 +1,37 @@
+// Create Product
+{
+    "name": "Coca Cola",
+    "code": [
+        {
+            "name": "Cap",
+            "code": 1
+        },
+        {
+            "name": "Bottle",
+            "code": 2
+        }
+    ],
+    "user": "Coca Cola Company"
+}
+// Get Request
+// 40 digit code
+{
+    "id": ""
+}
+// Update Request
+// 40 digit code
+{
+    "name": "Coca Cola",
+    "code": [
+        {
+            "name": "Cap",
+            "code": 1
+        },
+        {
+            "name": "Bottle",
+            "code": 2
+        }
+    ],
+    "user": "Coca Cola Company",
+    "id": ""
+}

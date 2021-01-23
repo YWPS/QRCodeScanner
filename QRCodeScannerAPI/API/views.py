@@ -9,16 +9,18 @@ def CreateProduct(request):
     """
     JSON Format:
     {
-        'Name': 'Name",
-        'Code': [
-            {'name' : 'ABC',
-            'code': 1
-            },
-            {'name' : 'ABC',
-            'code': 1
-            }
-        ]
-    }
+    "name": "Coca Cola",
+    "code": [
+        {
+            "name": "Cap",
+            "code": 1
+        },
+        {
+            "name": "Bottle",
+            "code": 2
+        }
+    ]
+}
     """
     if request.method == "POST":
         if request.json:

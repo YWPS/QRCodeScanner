@@ -1,57 +1,58 @@
 import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils.crypto import get_random_string
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.contrib.auth.hashers import check_password
 
 from .models import Product
-# Create your views here.
-def CreateProduct(request):
-    """
-    JSON Format:
-    {
-    "name": "Coca Cola",
-    "code": [
-        {
-            "name": "Cap",
-            "code": 1
-        },
-        {
-            "name": "Bottle",
-            "code": 2
-        }
-    ]
-}
-    """
-    if request.method == "POST":
-        if request.json:
-            jsonUnicode = request.body.decode('utf-8')
-            jsonData = json.loads(jsonUnicode)
-            # required fields
-            name = jsonData["name"]
-            code = str(jsonData["code"])
-            id = get_random_string(length=40)
-            # update or create model
-            Product.objects.update_or_create(name=name, code=code, id=id)
-            # response
-            return JsonResponse({
-                "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=256x256"
-            })
 
-def GetProduct(request):
-    """
-    JSON Format:
-    {
-        'id': '1234mds'
-    }
-    """
+"""
+GET DATA
+"""
+@csrf_exempt
+def CreateProduct(request):
     if request.method == "POST":
-        if request.json:
-            jsonUnicode = request.body.decode('utf-8')
-            jsonData = json.loads(jsonUnicode)
-            id = jsonData["id"]
-            target = Product.objects.get(id=id)
-            data = {
-                'Name': target.name,
-                'Code': eval(target.code)
-            }
-            return JsonResponse(data)
+        # decode json
+        jsonUnicode = request.body.decode('utf-8')
+        jsonData = json.loads(jsonUnicode)
+        # required fields
+        name = jsonData["name"]
+        code = str(jsonData["code"])
+        username = jsonData["username"]
+        # get user
+        user = User.objects.get(username=username)
+        hash = get_random_string(length=40)
+        # update or create model
+        Product.objects.update_or_create(name=name, code=code, user=user,  hash=hash)
+        # response
+        return JsonResponse({
+            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=256x256"
+        })
+
+
+
+@csrf_exempt
+def GetProduct(request):
+    if request.method == "POST":
+            # decode json
+        jsonUnicode = request.body.decode('utf-8')
+        jsonData = json.loads(jsonUnicode)
+        # json data
+        hash = jsonData["hash"]
+        target = Product.objects.get(hash=hash)
+        data = {
+            'Name': target.name,
+            'Code': eval(target.code),
+            'Person': target.person.username
+        }
+        return JsonResponse(data)
+
+
+
+
+"""
+USER AUTHENTICATION
+"""

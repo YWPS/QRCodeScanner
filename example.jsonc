@@ -16,7 +16,7 @@
 // Get Request
 // 40 digit code
 {
-    "id": ""
+    "hash": ""
 }
 // Update Request
 // 40 digit code
@@ -33,5 +33,5 @@
         }
     ],
     "user": "Coca Cola Company",
-    "id": ""
+    "hash": ""
 }

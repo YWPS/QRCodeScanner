@@ -1,19 +1,51 @@
 import json
+
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from django.contrib.auth.hashers import check_password
 
 from .models import Product
 
-"""
-GET DATA
-"""
+
 @csrf_exempt
-def CreateProduct(request):
+def CreateProduct(request, name):
+    if request.method == "POST":
+        # decode json
+        jsonUnicode = request.body.decode('utf-8')
+        jsonData = json.loads(jsonUnicode)
+        # required fields
+        code = str(jsonData["code"])
+        username = jsonData["username"]
+        # authenticate user
+        user = User.objects.get(username=username)
+        hash = get_random_string(length=40)
+        # update or create model
+        Product.objects.update_or_create(name=name, code=code, user=user,  hash=hash)
+        # response
+        return JsonResponse({
+            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
+        })
+
+
+
+@csrf_exempt
+def GetProduct(request, hash):
+    if request.method == "POST":
+        target = Product.objects.get(hash=hash)
+        data = {
+            'name': target.name,
+            'code': eval(target.code),
+            'user': target.person.username
+        }
+        return JsonResponse(data)
+
+
+
+@csrf_exempt
+def UpdateProduct(request, hash):
     if request.method == "POST":
         # decode json
         jsonUnicode = request.body.decode('utf-8')
@@ -22,37 +54,16 @@ def CreateProduct(request):
         name = jsonData["name"]
         code = str(jsonData["code"])
         username = jsonData["username"]
-        # get user
+        # authenticate user
         user = User.objects.get(username=username)
-        hash = get_random_string(length=40)
         # update or create model
         Product.objects.update_or_create(name=name, code=code, user=user,  hash=hash)
         # response
         return JsonResponse({
-            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=256x256"
+            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
         })
 
-
-
 @csrf_exempt
-def GetProduct(request):
-    if request.method == "POST":
-            # decode json
-        jsonUnicode = request.body.decode('utf-8')
-        jsonData = json.loads(jsonUnicode)
-        # json data
-        hash = jsonData["hash"]
-        target = Product.objects.get(hash=hash)
-        data = {
-            'Name': target.name,
-            'Code': eval(target.code),
-            'Person': target.person.username
-        }
-        return JsonResponse(data)
-
-
-
-
-"""
-USER AUTHENTICATION
-"""
+def DeleteProduct(request, hash):
+    Product.objects.delete(hash=hash)
+    return JsonResponse({})

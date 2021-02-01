@@ -5,7 +5,8 @@
 ### 1. CREATE '/product/create/<name>'
 
 ```json
-// DATA STYLE
+// REQUEST
+// AUTHENTICATE before request
 {
 	"code": [
 	{
@@ -17,22 +18,33 @@
 	"code": 2
 	}
 	],
-	"username": "Coca Cola Company",
-	"password": "123456"
+	"username": "Coca Cola Company"
+}
+
+// RESPONSE
+{
+   "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
 }
 ```
 
 ### 2. READ '/product/<hash>'
 
 ```json
-// DATA STYLE
+// REQUEST
 // NONE
+// RESPONSE
+{
+"name": target.name",
+"code": eval(target.code),
+"user": target.person.username
+}
 ```
 
 ### 3. UPDATE '/product/update/<hash>'
 
 ```json
-// DATA STYLE
+// REQUEST
+// AUTHENTICATE USER 
 {
     "name": "Coca Cola",
     "code": [
@@ -48,16 +60,19 @@
     "username": "Coca Cola Company",
 		"password": "123456"
 }
+// RESPONSE
+{
+"url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
+}
 ```
 
 ### 4. DELETE '/product/delete/<hash>'
 
 ```json
-// DATA STYLE
+// DATA 
 {
 	"username": "Coca Cola Company",
-	"password": "123456"
-}
+	"password": "123456
 ```
 
 ---
@@ -66,7 +81,7 @@
 
 ---
 
-## User: CRUD
+# User: CRUD
 
 ### 1. CREATE '/user/create/<username>'
 
@@ -77,7 +92,7 @@
 }
 ```
 
-### 2. READ '/user/<username>'
+### 2. GET '/user/<username>'
 
 ```json
 // DATA STYLE
@@ -107,6 +122,15 @@
 ```
 
 ### 4. DELETE '/user/delete/user'
+
+```json
+// DATA STYLE
+{
+	"password": "123456"
+}
+```
+
+### 5. AUTH '/auth/username'
 
 ```json
 // DATA STYLE

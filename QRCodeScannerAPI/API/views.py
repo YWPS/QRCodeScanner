@@ -23,10 +23,10 @@ def CreateProduct(request, name):
         user = User.objects.get(username=username)
         hash = get_random_string(length=40)
         # update or create model
-        Product.objects.update_or_create(name=name, code=code, user=user,  hash=hash)
+        Product.objects.update_or_create(name=name, code=code, User=user,  hash=hash)
         # response
         return JsonResponse({
-            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
+            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={hash};size=1024*1024"
         })
 
 
@@ -38,7 +38,7 @@ def GetProduct(request, hash):
         data = {
             'name': target.name,
             'code': eval(target.code),
-            'user': target.person.username
+            'user': target.User.username
         }
         return JsonResponse(data)
 
@@ -57,13 +57,13 @@ def UpdateProduct(request, hash):
         # authenticate user
         user = User.objects.get(username=username)
         # update or create model
-        Product.objects.update_or_create(name=name, code=code, user=user,  hash=hash)
+        Product.objects.update_or_create(name=name, code=code, User=user,  hash=hash)
         # response
         return JsonResponse({
-            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={id};size=1024*1024"
+            "url": f"https://api.qrserver.com/v1/create-qr-code/?data={hash};size=1024*1024"
         })
 
 @csrf_exempt
 def DeleteProduct(request, hash):
-    Product.objects.delete(hash=hash)
+    Product.objects.get(hash=hash).delete()
     return JsonResponse({})

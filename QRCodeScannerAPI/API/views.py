@@ -33,14 +33,13 @@ def CreateProduct(request, name):
 
 @csrf_exempt
 def GetProduct(request, hash):
-    if request.method == "POST":
-        target = Product.objects.get(hash=hash)
-        data = {
+    target = Product.objects.get(hash=hash)
+    data = {
             'name': target.name,
             'code': eval(target.code),
             'user': target.User.username
-        }
-        return JsonResponse(data)
+    }
+    return JsonResponse(data)
 
 
 
